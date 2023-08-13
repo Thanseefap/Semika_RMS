@@ -127,7 +127,7 @@ def update_strategy_performance(script, stop_loss):
  
 
 
-bot = telebot.TeleBot('6277515369:AAET-z6EumKmJ2hgredC3akclYWrBdyG8n0')
+bot = telebot.TeleBot('6155748648:AAFpOUSJ51lWtMNMeWFztTVXjTcjgju-P64')
 LOGIN_OTP = 'login_otp'
 SL_UPDATE = 'sl_update'
 
