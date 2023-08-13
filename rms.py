@@ -249,7 +249,7 @@ def perform_login(message):
     exit='NO'
     chat_id = message.chat.id
     otp = message.text
-    client=shoonya(twofa=otp,client_id='2')
+    client=shoonya(twofa=otp,client_id='3')
     api=client.login()
     print(api)
     if api is None or type(api)==str:
