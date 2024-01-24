@@ -10,8 +10,8 @@ global PNL_TYPE
 
 
 scrip='ALL'
-sl=-0.5
-profit_b=1
+sl=-2500
+profit_b=10000
 client_id='12'
 exit='NO'
 expiry='NO'
@@ -160,18 +160,18 @@ def Riskmanager(script,percent):
             un_real_pl=df1['urmtom'].sum()
 
             ## Ading PNL Selection method for 3PM Entry
-            print(PNL_TYPE)
+           # print(PNL_TYPE)
             if PNL_TYPE=='T_PNL':
                mtm=booked_pl+un_real_pl
-               print(mtm)
+              # print(mtm)
             else:
                 mtm=un_real_pl
-                print(mtm)
+              #  print(mtm)
             #Getting total margin used
             margin=api.get_limits()
             used_margin=float(margin['marginused'])
             p=(mtm/used_margin)*100
-            print('check 1')
+           # print('check 1')
 
 
             call_prem=-1*df1['net'][df1['dname'].str.contains('CE')].sum()
@@ -183,7 +183,7 @@ def Riskmanager(script,percent):
             pe_s_lots=df1['netqty'][df1['dname'].str.contains('PE')][df1['netqty']<0].sum()
 
 
-            print(ce_b_lots,ce_s_lots,pe_b_lots,pe_s_lots)
+         #   print(ce_b_lots,ce_s_lots,pe_b_lots,pe_s_lots)
 
 
 
@@ -194,7 +194,7 @@ def Riskmanager(script,percent):
 
         except AttributeError:
             show=['No']
-            print('check 4')
+          #  print('check 4')
             return show
         def exit_position(qty,sym,sell_buy):
              api.place_order(buy_or_sell=sell_buy
@@ -206,8 +206,8 @@ def Riskmanager(script,percent):
         df=df1
         symbols=df[df['netqty']!=0][['tsym','netqty']]
         symbols=symbols.sort_values( by='netqty')    # ascending=False
-        if p<percent:
-            print('check 3')
+        if mtm<percent:
+          #  print('check 3')
             for i in range(len(symbols)):
                 symp=symbols.iloc[i][0]
                 if float(symbols.iloc[i][1])<0:
@@ -219,7 +219,7 @@ def Riskmanager(script,percent):
             
             return show
          
-        elif p>=profit_b:
+        elif mtm>=profit_b:
             # print('check 6')
              for i in range(len(symbols)):
                 symp=symbols.iloc[i][0]
@@ -232,7 +232,7 @@ def Riskmanager(script,percent):
             
              return show
         else:      
-             show=[p,mtm,percent,used_margin,Net_credit,
+             show=[p,mtm,percent*100/used_margin,used_margin,Net_credit,
                    booked_pl,un_real_pl,call_prem,ce_s_lots,ce_b_lots,put_prem,pe_s_lots,pe_b_lots]
              show= [ round(elem,2) for elem in show ]
              return show  
@@ -664,9 +664,9 @@ def callback_handler(call):
                 Net_credit = show[4]
                 Net_PL = show[0]
                 CURRENT = show[1]
-                stop_loss = show[2]
+                stop_loss =  round(stop_loss / (margin *1000),2)
                 margin = round(show[3]/100000)
-                sl_in_cash = round(stop_loss * (margin *100000/ 100),2)
+                sl_in_cash =  show[2]
                 call_prem=show[7]
                 call_s_lot=show[8]
                 call_b_lot=show[9]
